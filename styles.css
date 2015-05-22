@@ -3,3 +3,10 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
+./*asteroid{
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  background-image: url('asteroid.png');
+}
+*/

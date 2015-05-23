@@ -1,51 +1,63 @@
-// start slingin' some d3 here.
-// var asteroid =
 var asteroidCount = 20;
+
+//makes asteroids
 var createAsteroid = function() {
   var x = Math.random() * 800;
   var y = Math.random() * 800;
-  var asteroidSize = Math.random() * 50;
-  d3.select(".mainSvg").append("circle")
-       .attr("cy", y)
-       .attr("cx", x)
-       .attr("r", asteroidSize)
-       .attr("fill", "red")
-
-    // .attr("height", 200)
-    // .attr("width", 200)
-    // .attr("y", y)
-    // .attr("x", x)
-    // .attr
-    // // .attr("position", "absolute")
-    // // .style("background-image", "url('asteroid.png')")
-    //  .transform("translate(50, 50)");
+  var asteroidSize = Math.random() * 40;
+  d3.select(".mainSvg").append("image")
+       .attr("y", y)
+       .attr("x", x)
+       .attr("height", asteroidSize)
+       .attr("width", asteroidSize)
+       .attr("xlink:href", "asteroid_small.png")
 }
-while(asteroidCount > 0) {
-  createAsteroid();
-  asteroidCount--;
-}
-
-// var update = function(){
-
-  //   .attr();
-// };
-// d3.select(".mainSvg").selectAll("circle").transition().duration(2000).attr("fill", "blue");
+//moves asteroids
 var moveAsteroid = function(){
-  var main = document.getElementsByClassName("mainSvg");
-  var children = main[0].childNodes;
   var data = [];
-
-  for(var i = 0; i < children.length; i++) {
+  console.log(asteroidCount);
+  for(var i = 0; i < 20; i++) {
     var newX = Math.random() * 800;
     var newY = Math.random() * 800;
     data.push({x: newX, y: newY});
   }
 
-  d3.select(".mainSvg").selectAll("circle").data(data).transition().duration(1000).attr("cx", function(d){return d.x})
-  .attr("cy", function(d){return d.y});
-
-
-
+  d3.select(".mainSvg").selectAll("image").data(data).transition().duration(2000).attr("x", function(d){return d.x})
+  .attr("y", function(d){return d.y});
 };
 
-setInterval(moveAsteroid, 1000);
+//here is the player
+
+var player = d3.select(".mainSvg").append("circle")
+.attr("cx", 400).attr("cy", 440).attr("fill", "blue")
+.attr("r", 40).attr("class", "player");
+
+var drag = d3.behavior.drag()
+  .on("dragstart", function(){
+    d3.select(".player").attr("fill", "red");
+  })
+  .on("drag", function(){
+      var dragx = d3.event.x;
+      var dragy = d3.event.y;
+      // d3.select(".player").attr("transform", "translate(" + dragx + "," + dragy + ")");})
+      d3.select(".player").attr("cx", dragx).attr("cy", dragy)})
+  .on("dragend", function(){
+      d3.select(".player").attr("fill", "blue");
+  });
+d3.selectAll(".player").call(drag)
+
+
+
+  // .on("drag", function(d){
+  //   var x = d3.event.x;
+  //   var y = d3.event.y;
+  //   d3.select(".player").attr("transform", "translate(" + x + "," + y + ")");
+  // });
+
+
+var i = asteroidCount;
+while(i > 0) {
+  createAsteroid();
+  i--;
+}
+setInterval(moveAsteroid, 2000);

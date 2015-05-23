@@ -12,8 +12,7 @@ Feel free to use it if you like. */
 */
 .main{
   background-color: black;
-/*  background-image: url('space_background.jpg');
-/**/  /*background-repeat: no-repeat;*/
+  background-image: url('space-background.jpg');
   border: 4px solid black;
   height: 800px;
   width: 800px;

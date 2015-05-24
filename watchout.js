@@ -3,6 +3,8 @@ var score = 0;
 var currentHighScore =0;
 var collisions = 0;
 var inCollision = false;
+var clear = true;
+var collidingAsteroid;
 
 //makes asteroids
 var createAsteroid = function() {
@@ -21,7 +23,7 @@ var createAsteroid = function() {
        .attr("width", asteroidSize)
        .attr("class", "asteroid")
        .attr("xlink:href", randImg());
-}
+};
 //moves asteroids
 var moveAsteroid = function(){
   var data = [];
@@ -31,8 +33,9 @@ var moveAsteroid = function(){
     data.push({x: newX, y: newY});
   }
 
-  d3.select(".mainSvg").selectAll(".asteroid").data(data).transition().duration(2000).attr("x", function(d){return d.x})
-  .attr("y", function(d){return d.y});
+  d3.select(".mainSvg").selectAll(".asteroid").data(data).transition().duration(2000)
+    .attr("x", function(d){return d.x})
+    .attr("y", function(d){return d.y});
 };
 
 //here is the player
@@ -57,34 +60,43 @@ var drag = d3.behavior.drag()
   .on("dragend", function(){
       d3.select(".player").attr("fill", "blue");
   });
-d3.selectAll(".player").call(drag)
+d3.selectAll(".player").call(drag);
 
 var checkCollision = function(){
   var colX = d3.select(".player").attr("x");
   var colY = d3.select(".player").attr("y");
   var playerR = (d3.select(".player").attr("width"))/2;
   var asteroids = d3.selectAll(".asteroid");
-      for(var i = 0; i < asteroids[0].length; i++){
-        var astX = asteroids[0][i].x.baseVal.value;
-        var astY = asteroids[0][i].y.baseVal.value;
-        var astR = (asteroids[0][i].height.baseVal.value)/2;
-        var distance = Math.sqrt(Math.pow((astX - colX),2) + Math.pow((astY - colY),2));
-        if((astR + playerR) > distance ){
-          // dead
-          d3.select(".player").attr("xlink:href", "explosion.jpg").transition().attr("xlink:href", "flying-saucer.png");
-          if(score > currentHighScore){
-            currentHighScore = score;
-            d3.select(".high").text("High score: " + currentHighScore);
-          }
-          score = 0;
-         //  if(inCollision){
-         //    collisions++;
-         //    d3.select(".collisions").text("Collisions: " + collisions);
-         //    inCollision = false;
-         // }
-        }
+    for(var i = 0; i < asteroids[0].length; i++){
+      var astX = asteroids[0][i].x.baseVal.value;
+      var astY = asteroids[0][i].y.baseVal.value;
+      var astR = (asteroids[0][i].height.baseVal.value)/2;
+      var distance = Math.sqrt(Math.pow((astX - colX),2) + Math.pow((astY - colY),2));
+      inCollision = astR + playerR > distance;
 
+      if(inCollision && clear){
+        //keep track of colliding asteroid
+        collidingAsteroid = i;
+
+        // explosion effect
+        d3.select(".player").attr("xlink:href", "explosion.png").transition()
+          .attr("xlink:href", "flying-saucer.png");
+
+        if(score > currentHighScore){
+          currentHighScore = score;
+          d3.select(".high").text("High score: " + currentHighScore);
+        }
+        score = 0;
+        clear = false;
+        collisions++;
+        d3.select(".collisions").text("Collisions: " + collisions);
+
+        //disable multiple collisions from same asteroid
+      } else if (!inCollision && !clear && i === collidingAsteroid) {
+        clear = true;
       }
+
+    }
   score++;
   d3.select(".current").text("Current score: " + score);
 };

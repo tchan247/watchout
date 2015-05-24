@@ -8,14 +8,19 @@ var inCollision = false;
 var createAsteroid = function() {
   var x = Math.random() * 800;
   var y = Math.random() * 800;
-  var asteroidSize = Math.random() * 40;
+  var asteroidSize = 15 + (Math.random() * 25);
+  var randImg = function() {
+    var imgs = ["asteroid_small.png", "asteroid2.png"];
+    return imgs[Math.floor(Math.random() * 2)];
+  };
+
   d3.select(".mainSvg").append("image")
        .attr("y", y)
        .attr("x", x)
        .attr("height", asteroidSize)
        .attr("width", asteroidSize)
        .attr("class", "asteroid")
-       .attr("xlink:href", "asteroid_small.png")
+       .attr("xlink:href", randImg());
 }
 //moves asteroids
 var moveAsteroid = function(){
